@@ -13,8 +13,8 @@ namespace Flarum\Core\Validator;
 
 use Flarum\Core\User;
 
-class UserValidator extends AbstractValidator
-{
+class UserValidator extends AbstractValidator {
+
     /**
      * @var User
      */
@@ -41,20 +41,23 @@ class UserValidator extends AbstractValidator
      */
     protected function getRules()
     {
-        $idSuffix = $this->user ? ','.$this->user->id : '';
+        $idSuffix = $this->user ? ',' . $this->user->id : '';
+
+        $config = app('flarum.config');
 
         return [
             'username' => [
                 'required',
                 'regex:/^[a-z0-9_-]+$/i',
-                'unique:users,username'.$idSuffix,
-                'min:3',
+                'unique:users,username' . $idSuffix,
+                'min:' . $config['validation']['user']['store']['username']['min'],
+//                'min:3',
                 'max:30'
             ],
             'email' => [
                 'required',
                 'email',
-                'unique:users,email'.$idSuffix
+                'unique:users,email' . $idSuffix
             ],
             'password' => [
                 'required',
@@ -63,13 +66,4 @@ class UserValidator extends AbstractValidator
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getMessages()
-    {
-        return [
-            'username.regex' => $this->translator->trans('core.api.invalid_username_message')
-        ];
-    }
 }
